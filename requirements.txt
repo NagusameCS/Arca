@@ -1,0 +1,21 @@
+# Arca Bank Dependencies
+
+# Database
+sqlalchemy>=2.0.0
+
+# Discord Bot (optional - only needed if running the Discord bot)
+discord.py>=2.3.0
+
+# Chart Generation
+matplotlib>=3.7.0
+numpy>=1.24.0
+
+# Environment Variables
+python-dotenv>=1.0.0
+
+# Async Support
+aiohttp>=3.8.0
+
+# Development
+pytest>=7.0.0
+pytest-asyncio>=0.21.0

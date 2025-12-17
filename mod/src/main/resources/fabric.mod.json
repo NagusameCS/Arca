@@ -1,0 +1,30 @@
+{
+    "schemaVersion": 1,
+    "id": "arcabank",
+    "version": "${version}",
+    "name": "Arca Bank",
+    "description": "In-game integration for Arca Bank economy system. Check prices, report trades, and view your trading statistics.",
+    "authors": [
+        "Arca Development Team"
+    ],
+    "contact": {
+        "homepage": "https://github.com/arca-bank/arca-mod",
+        "sources": "https://github.com/arca-bank/arca-mod"
+    },
+    "license": "MIT",
+    "icon": "assets/arcabank/icon.png",
+    "environment": "client",
+    "entrypoints": {
+        "client": [
+            "com.arcabank.ArcaBankClient"
+        ]
+    },
+    "mixins": [],
+    "depends": {
+        "fabricloader": ">=0.15.0",
+        "minecraft": "~1.20.4",
+        "java": ">=17",
+        "fabric-api": "*"
+    },
+    "suggests": {}
+}
