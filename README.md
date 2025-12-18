@@ -2,7 +2,7 @@
 
 A comprehensive economic backend system for Minecraft servers, featuring a Discord bot integration and a Fabric client mod for in-game price checking and trade reporting.
 
-## Overview
+## 🌟 Overview
 
 Arca Bank provides a complete currency management system with:
 - **Dual Currency System**: Carats (C) and Golden Carats (GC) with a 9:1 ratio
@@ -14,7 +14,7 @@ Arca Bank provides a complete currency management system with:
 - **Trade Reporting**: Track trades, prices, and trader reputation
 - **Java Mod**: In-game keybind for price checks and trade reporting
 
-## Currency System
+## 💰 Currency System
 
 ### Exchange Rates
 - **1 Golden Carat (GC) = 9 Carats (C)**
@@ -28,7 +28,7 @@ Arca Bank provides a complete currency management system with:
 | Currency Exchange | 2.0% |
 | Withdrawals | 1.0% |
 
-## Permission Levels
+## 👥 Permission Levels
 
 | Role | Level | Permissions |
 |------|-------|-------------|
@@ -37,7 +37,7 @@ Arca Bank provides a complete currency management system with:
 | **Banker** | 1 | All user + deposits, ATM profits, verify trades |
 | **Head Banker** | 2 | All banker + mint/burn, promote users, freeze prices, trader reports |
 
-## Market Features
+## 📈 Market Features
 
 - **Real-time Index**: Updates every 15 minutes (configurable)
 - **Delayed Average**: 24-hour rolling average to prevent manipulation
@@ -46,14 +46,20 @@ Arca Bank provides a complete currency management system with:
 - **Item Price Tracking**: Market prices derived from trade reports
 - **Trending Items**: Track most traded items by volume
 
-## Quick Start
+---
+
+## 🚀 Quick Start
 
 ### 1. Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/arca-bank.git
-cd arca-bank
+git clone https://github.com/NagusameCS/Arca.git
+cd Arca
+
+# Create virtual environment (recommended)
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -62,32 +68,171 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-### 2. Configuration
+### 2. Create a Discord Bot
 
-Edit `.env` with your settings:
-```env
-DISCORD_TOKEN=your_bot_token
-ARCA_DATABASE_URL=sqlite:///arca_bank.db
-```
+1. Go to the [Discord Developer Portal](https://discord.com/developers/applications)
+2. Click **"New Application"** and give it a name (e.g., "Arca Bank")
+3. Go to the **Bot** section and click **"Add Bot"**
+4. Under **Privileged Gateway Intents**, enable:
+   - ✅ SERVER MEMBERS INTENT
+   - ✅ MESSAGE CONTENT INTENT
+5. Click **"Reset Token"** and copy your bot token
+6. Add the token to your `.env` file:
+   ```env
+   DISCORD_TOKEN=your_bot_token_here
+   ```
 
-### 3. Run the Bot
+### 3. Invite the Bot to Your Server
+
+1. In the Developer Portal, go to **OAuth2 → URL Generator**
+2. Select scopes: `bot`, `applications.commands`
+3. Select bot permissions:
+   - Send Messages
+   - Use Slash Commands
+   - Embed Links
+   - Attach Files
+   - Read Message History
+4. Copy the generated URL and open it in your browser
+5. Select your server and authorize the bot
+
+### 4. Run the Bot
 
 ```bash
+# Activate virtual environment if not already active
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Run the bot
 python bot.py
 ```
 
-### 4. Run the REST API (for Java mod)
+You should see: `Arca Bank Bot ready!`
+
+### 5. Run the REST API (Optional - for Java mod)
 
 ```bash
 python run_api.py
-# Or manually:
+# Or with uvicorn directly:
 uvicorn src.integration.java_interface:create_fastapi_app --host 0.0.0.0 --port 8080
 ```
 
-## Project Structure
+---
+
+## 🖥️ Running 24/7
+
+### Using systemd (Linux)
+
+Create `/etc/systemd/system/arcabank.service`:
+
+```ini
+[Unit]
+Description=Arca Bank Discord Bot
+After=network.target
+
+[Service]
+Type=simple
+User=your_username
+WorkingDirectory=/path/to/Arca
+Environment=DISCORD_TOKEN=your_token_here
+ExecStart=/path/to/Arca/.venv/bin/python bot.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Then:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable arcabank
+sudo systemctl start arcabank
+sudo systemctl status arcabank
+```
+
+### Using Screen (Simple method)
+
+```bash
+screen -S arcabank
+python bot.py
+# Press Ctrl+A then D to detach
+# Reconnect later with: screen -r arcabank
+```
+
+### Using Docker (Coming soon)
+
+```bash
+docker-compose up -d
+```
+
+---
+
+## 📋 Discord Commands
+
+### 🔧 Utility Commands
+| Command | Description |
+|---------|-------------|
+| `/help` | View all commands with descriptions |
+| `/ping` | Check bot latency and status |
+| `/about` | Learn about Arca Bank |
+
+### 👤 Public Commands
+| Command | Description |
+|---------|-------------|
+| `/register` | Register with Arca Bank |
+| `/link` | Link your Minecraft account |
+| `/balance` | Check your balance |
+| `/transfer @user 100 carat` | Transfer currency |
+| `/exchange 9 carat golden_carat` | Exchange currencies |
+| `/leaderboard` | View wealth leaderboard |
+
+### 📊 Market Commands
+| Command | Description |
+|---------|-------------|
+| `/treasury` | View treasury status |
+| `/market` | View market status |
+| `/history 30` | View 30-day transaction history |
+| `/chart 7` | View 7-day market chart |
+| `/treasurychart 30` | View treasury health chart |
+| `/advancedchart 30` | Advanced stock-style chart with indicators |
+| `/marketoverview` | Multi-timeframe overview (1D/7D/30D/90D) |
+
+### 🤝 Trade Commands
+| Command | Description |
+|---------|-------------|
+| `/reporttrade` | Report a trade (BUY/SELL/EXCHANGE) |
+| `/mytrades` | View your recent trades |
+| `/mystats` | View your trading statistics |
+| `/itemprice [item]` | Check market price for an item |
+| `/trending` | View trending items by volume |
+| `/toptraders` | View top traders by volume |
+
+### 🏦 Banker Commands
+| Command | Description |
+|---------|-------------|
+| `/deposit @user 100 100` | Deposit diamonds, issue carats |
+| `/atmprofit 10` | Record ATM profit (10 books = 900 💎) |
+| `/verifytrade [id]` | Verify a trade report |
+| `/resign` | Resign from banker position |
+
+### 👑 Head Banker Commands
+| Command | Description |
+|---------|-------------|
+| `/mintcheck 5` | Check minting recommendation |
+| `/mint 1000 carat` | Mint 1000 carats |
+| `/burn 500 carat` | Burn 500 carats |
+| `/promote @user` | Promote user to banker |
+| `/setconsumer @user` | Set user to consumer (read-only) |
+| `/freezeprice 1.0` | Freeze price at 1.0 |
+| `/unfreezeprice` | Unfreeze market price |
+| `/traderreport @user` | Get detailed report on a trader |
+| `/alltraders` | Get summary of all traders |
+
+---
+
+## 📁 Project Structure
 
 ```
-arca-bank/
+Arca/
 ├── src/
 │   ├── config.py              # Economic configuration
 │   ├── models/                # Database models
@@ -104,7 +249,7 @@ arca-bank/
 │   │   ├── market_service.py
 │   │   ├── mint_service.py
 │   │   ├── chart_service.py
-│   │   └── trade_service.py  # Trade reporting
+│   │   └── trade_service.py
 │   ├── api/                  # External interfaces
 │   │   ├── bank_api.py       # Main API class
 │   │   └── scheduler.py      # Background tasks
@@ -113,67 +258,23 @@ arca-bank/
 ├── mod/                      # Fabric Minecraft mod
 │   ├── build.gradle
 │   └── src/main/java/com/arcabank/
+├── tests/                    # Test suite
+│   └── test_bank.py
 ├── bot.py                    # Discord bot
-└── requirements.txt
-```
-├── .env.example
+├── run_api.py               # REST API server
+├── requirements.txt         # Python dependencies
+├── .env.example            # Environment template
 └── README.md
 ```
 
-## Discord Commands
+---
 
-### Public Commands
-| Command | Description |
-|---------|-------------|
-| `/register` | Register with Arca Bank |
-| `/link` | Link your Minecraft account |
-| `/balance` | Check your balance |
-| `/transfer @user 100 carat` | Transfer currency |
-| `/exchange 9 carat golden_carat` | Exchange currencies |
-| `/treasury` | View treasury status |
-| `/market` | View market status |
-| `/chart 7` | View 7-day market chart |
-| `/advancedchart 30` | View advanced stock-style chart with indicators |
-| `/marketoverview` | View multi-timeframe market overview (1D/7D/30D/90D) |
-| `/history 30` | View 30-day transaction history |
-
-### Trade Commands
-| Command | Description |
-|---------|-------------|
-| `/reporttrade` | Report a trade (BUY/SELL/EXCHANGE) |
-| `/mytrades` | View your recent trades |
-| `/mystats` | View your trading statistics |
-| `/itemprice [item]` | Check market price for an item |
-| `/trending` | View trending items by volume |
-| `/toptraders` | View top traders by volume |
-
-### Banker Commands
-| Command | Description |
-|---------|-------------|
-| `/deposit @user 100 100` | Deposit diamonds, issue carats |
-| `/atmprofit 10` | Record ATM profit (10 books = 900) |
-| `/verifytrade [id]` | Verify a trade report |
-| `/resign` | Resign from banker position (with confirmation) |
-
-### Head Banker Commands
-| Command | Description |
-|---------|-------------|
-| `/mintcheck 5` | Check minting recommendation (with 5 expected ATM books) |
-| `/mint 1000 carat` | Mint 1000 carats |
-| `/burn 500 carat` | Burn 500 carats |
-| `/promote @user` | Promote user to banker |
-| `/setconsumer @user` | Set user to consumer (read-only) |
-| `/freezeprice 1.0` | Freeze price at 1.0 |
-| `/unfreezeprice` | Unfreeze market price |
-| `/traderreport @user` | Get detailed report on a trader |
-| `/alltraders` | Get summary of all traders |
-
-## Profit Strategy
+## 💹 Profit Strategy
 
 Arca Bank generates profit through:
 
 1. **Transaction Fees**: 1.5% on all transfers
-2. **Exchange Fees**: 2.0% on carat <-> golden carat exchanges
+2. **Exchange Fees**: 2.0% on carat ↔ golden carat exchanges
 3. **Withdrawal Fees**: 1.0% on diamond withdrawals
 4. **ATM Book Profits**: 90 diamonds per book deposited
 5. **Minting**: When treasury is over-backed, mint new carats to maintain book value
@@ -191,7 +292,9 @@ If book_value < 0.85 → BURN (under-backed, protect value)
 Otherwise → HOLD
 ```
 
-## Configuration
+---
+
+## ⚙️ Configuration
 
 Edit `src/config.py` to customize:
 
@@ -207,7 +310,9 @@ class EconomyConfig:
     MAX_MINT_PER_DAY = 10000         # Daily mint limit
 ```
 
-## Java Mod Integration
+---
+
+## ⛏️ Java Mod Integration
 
 The Fabric mod allows players to check prices and report trades directly from in-game.
 
@@ -254,7 +359,9 @@ Edit `config/arcabank.json`:
 | `/api/trade/history/{uuid}` | GET | Get trade history |
 | `/api/trade/stats/{uuid}` | GET | Get trading statistics |
 
-## Security Features
+---
+
+## 🔒 Security Features
 
 - **Permission Validation**: All sensitive operations require appropriate role
 - **Daily Mint Limits**: Prevents runaway inflation
@@ -262,7 +369,23 @@ Edit `config/arcabank.json`:
 - **Transaction Logging**: Full audit trail
 - **Reserve Requirements**: 20% of diamonds held in reserve
 
-## Trade Reporting System
+---
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
+# Run all tests
+python -m pytest tests/ -v
+
+# Run with coverage
+python -m pytest tests/ -v --cov=src
+```
+
+---
+
+## 📊 Trade Reporting System
 
 The trade reporting system allows players to record their trades, building a market price database and trader reputation.
 
@@ -286,22 +409,35 @@ The trade reporting system allows players to record their trades, building a mar
 - `SERVICES` - Services (repairs, builds, etc.)
 - `OTHER` - Miscellaneous
 
-## Future Enhancements
+---
 
+## 🗺️ Roadmap
+
+- [x] Discord Bot with slash commands
+- [x] Trade reporting system
+- [x] Java Fabric mod
+- [x] Consumer role (read-only)
+- [x] Advanced charting
+- [x] Wealth leaderboard
 - [ ] WebSocket real-time updates
 - [ ] Web dashboard
 - [ ] Multi-server support
 - [ ] Loan system
 - [ ] Interest-bearing accounts
 - [ ] Auction house integration
-- [x] Trade reporting system
-- [x] Java Fabric mod
-- [x] Consumer role (read-only)
-
-## License
-
-MIT License - See LICENSE file
 
 ---
 
-**Arca Bank** - *Securing Minecraft's Financial Future*
+## 📄 License
+
+MIT License - See [LICENSE](LICENSE) file
+
+---
+
+<div align="center">
+
+**Arca Bank** - *Securing Minecraft's Financial Future* 💎
+
+[Report Bug](https://github.com/NagusameCS/Arca/issues) · [Request Feature](https://github.com/NagusameCS/Arca/issues)
+
+</div>

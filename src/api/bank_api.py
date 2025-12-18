@@ -5,9 +5,8 @@ This is the primary class Discord bots should interact with
 """
 
 from dataclasses import dataclass
-from datetime import datetime
 from decimal import Decimal
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 from ..models.base import get_db, init_db
 from ..models.currency import CurrencyType
@@ -17,8 +16,8 @@ from ..models.user import User, UserRole
 from ..services.chart_service import ChartService
 from ..services.currency_service import CurrencyService
 from ..services.market_service import MarketService
-from ..services.mint_service import MintRecommendation, MintService
-from ..services.trade_service import TraderReport, TradeService
+from ..services.mint_service import MintService
+from ..services.trade_service import TradeService
 from ..services.treasury_service import TreasuryService
 from ..services.user_service import UserService
 
@@ -795,7 +794,7 @@ class ArcaBank:
                     tt = TradeType(trade_type.upper())
                 except ValueError:
                     return OperationResult(
-                        success=False, message=f"Invalid trade type. Use: BUY, SELL, or EXCHANGE"
+                        success=False, message="Invalid trade type. Use: BUY, SELL, or EXCHANGE"
                     )
 
                 # Parse category
@@ -1180,3 +1179,39 @@ class ArcaBank:
                 )
         except Exception as e:
             return OperationResult(success=False, message="Failed to set role", error=str(e))
+
+    def get_leaderboard(self, limit: int = 10) -> OperationResult:
+        """Get wealth leaderboard - top users by total value"""
+        try:
+            with get_db() as db:
+                currency_service = CurrencyService(db)
+
+                # Get all users
+                users = db.query(User).filter(User.role != UserRole.CONSUMER).all()
+
+                # Calculate total value for each user
+                user_values = []
+                for user in users:
+                    balances = currency_service.get_user_balances(user)
+                    total_value = float(balances["total_in_carats"])
+                    if total_value > 0:  # Only include users with balance
+                        user_values.append(
+                            {
+                                "username": user.minecraft_username or user.discord_username,
+                                "discord_id": user.discord_id,
+                                "carats": float(balances["carats"]),
+                                "golden_carats": float(balances["golden_carats"]),
+                                "total_value": total_value,
+                            }
+                        )
+
+                # Sort by total value descending
+                user_values.sort(key=lambda x: x["total_value"], reverse=True)
+
+                return OperationResult(
+                    success=True,
+                    message=f"Top {min(limit, len(user_values))} users by wealth",
+                    data={"users": user_values[:limit]},
+                )
+        except Exception as e:
+            return OperationResult(success=False, message="Failed to get leaderboard", error=str(e))
